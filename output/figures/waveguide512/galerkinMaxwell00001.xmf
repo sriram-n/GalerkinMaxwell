@@ -1,0 +1,26 @@
+<Xdmf xmlns:xi='http://www.w3.org/2003/XInclude' Version='2.1'>
+  <Domain>
+    <Grid Name='Geometry' GridType='Uniform'>
+      <Topology TopologyType='Mixed' NumberOfElements='   65536'>
+        <DataItem Dimensions='  589824' NumberType='Int' Precision='4' Format='HDF'>
+        galerkinMaxwellgeom_00001.h5:/Objects
+        </DataItem>
+      </Topology>
+      <Geometry GeometryType='XYZ'>
+        <DataItem Dimensions='  128000 3' NumberType='Float' Precision='4' Format='HDF'>
+        galerkinMaxwellgeom_00001.h5:/Coords
+        </DataItem>
+      </Geometry>
+      <Attribute Name='Elfld_vec_comp_01_load_01_real' AttributeType='Vector' Center='Node'>
+        <DataItem Dimensions='      128000 3' NumberType='Float' Precision='4' Format='HDF'>
+        galerkinMaxwellvector_Elfld_vec_comp_01_load_01_real_00001.h5:Elfld_vec_comp_01_load_01_real
+        </DataItem>
+      </Attribute>
+      <Attribute Name='Elfld_comp_01_load_01_imag' AttributeType='Vector' Center='Node'>
+        <DataItem Dimensions='      128000 3' NumberType='Float' Precision='4' Format='HDF'>
+        galerkinMaxwellvector_Elfld_comp_01_load_01_imag_00001.h5:Elfld_comp_01_load_01_imag
+        </DataItem>
+      </Attribute>
+    </Grid>
+  </Domain>
+</Xdmf>
