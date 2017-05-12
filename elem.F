@@ -341,6 +341,10 @@ C       endif
 C       call copy_element_matrices(MdE,xnod,ibc, idec,
 C      .                        ZalocEE,ZblocE)
 c
+C       write(*,*) 'from elem.F: ZalocEE is: ', ZalocEE(1:MdE,1:MdE)
+C       write(*,*) ''
+C       write(*,*) 'from elem.F: ZblocE is: ', ZblocE(1:MdE)
+C       call pause
       if (iprint.ge.1) then
         write(*,7010)
  7010   format('elem_Hcurl: ZblocE = ')
@@ -382,8 +386,7 @@ c ...element geometry dof
       real*8, dimension(3,MAXbrickH),intent(in) :: Xnod
       integer  :: Idec
 c
-      integer :: iprint,i,checkIBC,j
-      !checkIBC = 0
+      integer :: iprint,i,j
 c
       iprint=1
 c
@@ -394,9 +397,6 @@ c ..check if one should recompute the element matrices
 c ... check if IBC is imposed, if so, always compute matrices
       do j=1,6
         if(ibc(j,1).eq.9) then
-         ! checkIBC = checkIBC+1
-        !endif
-        !if(checkIBC.eq.5) then
           write(*,*) 'ibc is imposed'
           Idec = 2
           return
@@ -408,44 +408,28 @@ c ....find the corresponding element in the first layer
         if ((abs(Xnod(1,1)-XYVERT(1,i)).lt.GEOM_TOL).and.
      .       (abs(Xnod(2,1)-XYVERT(2,i)).lt.GEOM_TOL)) go to 10
       enddo
-c      cwrite(*,*) 'copy_element_matrices: NRFL is: ', NRFL
-c      cwrite(*,*) 'copy_element_matrices: Xnod(1:3,1) is: ', Xnod(1:2,1)
-c      cwrite(*,*) 'i is ', i
-c      cwrite(*,*) 'copy_element_matrices: XYVERT(1:2,i) is: ', XYVERT(1:2,i)
 c
 c ....no element with this position has been computed yet
       Idec=2; return
 c
 c ....element matrices have been computed
 10    Idec=1
-c       if (checkIBC.eq.1) then
-c         Idec=2
-c         return
-c       endif
 c
       write(*,*) 'not computing the stiffness matrices'
-c      cwrite(*,*) 'copy_element_matrices: NRFL is: ', NRFL
-c      cwrite(*,*) 'copy_element_matrices: Xnod(1:3,1) is: ', Xnod(1:2,1)
-c      cwrite(*,*) 'i is ', i
-c      cwrite(*,*) 'copy_element_matrices: XYVERT(1:2,i) is: ', XYVERT(1:2,i)
 c ....copy the element matrices from the temporary data structure
+      write(*,*) 'i is: ', i
       ZalocEE(1:MdE,1:MdE) = ZFL_EE(1:MdE,1:MdE,i)
       ZblocE(1:MdE) = ZLOADFL_E(1:MdE,i)
-c
-c ....finish generating the matrices
-c      do i=1,MdQ
-c        ZalocQE(i,1:MdE) = conjg(ZalocEQ(1:MdE,i))
-c      enddo
-c      return
+      return
 c
 c ..store the element matrices
       case(2)
 c
+      write(*,*) 'computing the stiffness matrices'
 c ....store first vertex node xy coordinates
       NRFL=NRFL+1
+      write(*,*) 'NRFL is: ', NRFL
       if (NRFL.gt.MAXNRFL) then
-       write(*,*) 'copy_element_matrices: NRFL is: ', NRFL
-c        write(*,*) 'copy_element_matrices: Xnod(1:3,1) is: ', Xnod(1:3,1)
         write(*,*) 'copy_element_matrices: INCREASE MAXNRFL'
         stop 1
       endif

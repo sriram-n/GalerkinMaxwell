@@ -267,12 +267,12 @@ subroutine exact(Xp,Mdle, ValH,DvalH,D2valH, ValE,DvalE,D2valE, &
 
       f_x= Xp(1)*(1.d0-Xp(1))!dexp(-Xp(1)**2)/20.d0!sin(OMEGA*Xp(1))
       f_y= Xp(2)*(1.d0-Xp(2))!dexp(-Xp(2)**2)/20.d0!sin(OMEGA*Xp(2))
-      f_z= Xp(3)*(1.d0-Xp(3))!/1000.0d0
+      f_z= Xp(3)*(128.d0-Xp(3))!/1000.0d0
 !
 !     1st order derivatives
       df_x= 1.d0-2.d0*Xp(1)!-Xp(1)*dexp(-Xp(1)**2)/10.d0!(OMEGA)*cos(OMEGA*Xp(1))
       df_y=1.d0-2.d0*Xp(2)!-Xp(2)*dexp(-Xp(2)**2)/10.d0!(OMEGA)*cos(OMEGA*Xp(2))
-      df_z=(1.d0-2.d0*Xp(3))!/1000.0d0
+      df_z=(128.d0-2.d0*Xp(3))!/1000.0d0
 !
 !     2nd order derivatives
       ddf_x=-2.d0!dexp(-Xp(1)**2)*(2.d0*Xp(1)**2-1.d0)/10.d0!-OMEGA**2*f_x

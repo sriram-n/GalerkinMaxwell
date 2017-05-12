@@ -12,6 +12,7 @@ program main
       use physics
       use uhm2
       use problem
+      use matrices
 
 !
       implicit none
@@ -50,9 +51,9 @@ program main
       call get_option_real(   '-epsilon'            , 'EPSILON'                   , 1.d0               , EPSILON     )
       call get_option_real(   '-sigma'              , 'SIGMA'                     , 0.d0               , SIGMA       )
       PI = dacos(-1.d0)
-      call get_option_real(   '-omega'              , 'OMEGA'                     , 1.d0           , OMEGA       )
-      !GAMMA = sqrt(1.d0-(PI**2)/(OMEGA**2))
-      GAMMA = 1.d0
+      call get_option_real(   '-omega'              , 'OMEGA'                     , 1.5d0*PI           , OMEGA       )
+      GAMMA = sqrt(1.d0-(PI**2)/(OMEGA**2))
+      !GAMMA = 1.d0
 !      call get_option_real(   '-gamma'              , 'GAMMA'                     , 1.d0               , GAMMA       )
 !     -- Parview Interface --
       ! Variables relevant to src/modules/paraview
@@ -60,7 +61,7 @@ program main
       call get_option_string( '-prefix'          , 'Prefix paraview file'      ,'galerkinMaxwell'            , PREFIX      )
       call get_option_string('-file-vis-upscale','Visualization upscale file location','../../files/vis',FILE_VIS          )
       call get_option_string('-vis-level'       ,'Visualization upscale level (0-3)'  ,'2'                 ,VLEVEL            )
-      call get_option_string('-dir-paraview'    ,'Paraview root directory'            ,'./output/figures/waveguide32/' ,PARAVIEW_DIR      )
+      call get_option_string('-dir-paraview'    ,'Paraview root directory'            ,'./output/figures/waveguide128/' ,PARAVIEW_DIR      )
       call get_option_bool(  '-paraview-geom'   ,'Dump geom at every Paraview call'   ,.TRUE.              ,PARAVIEW_DUMP_GEOM)
       call get_option_bool(  '-paraview-attr'   ,'Dump solution to Paraview'          ,.TRUE.              ,PARAVIEW_DUMP_ATTR)
 !
@@ -114,7 +115,7 @@ program main
       write(*,*) '                                         '
       write(*,*) 'Compute Hcurl error ..................100'
       write(*,*) 'Compute Hcurl error rates ............110'
-      write(*,*) '1 uniform n anisotropic refinement....120'
+      write(*,*) '2 uniform n anisotropic refinement....120'
       write(*,*) 'Compute BC data interpolation error...130'
       write(*,*) '                                         '
       write(*,*) 'My tests..... ........................200'
@@ -223,9 +224,11 @@ program main
 !
 !     MUMPS solve
       case(50)
+        NRFL = 0
         call uhm_time_in
         !call hack_impedance
         call mumps_interf(MY_NR_RHS)
+        !call mumps_sc_3D
         !call unhack_impedance
         call uhm_time_out(t)
         write(*,*) 'time mumps = ', t
@@ -265,7 +268,7 @@ program main
 
 ! ......... 1 uniform n anisotropic refinements and solve
         case(120)
-        write(*,*) '1 uniform n anisotropic refinements and solve'
+        write(*,*) '2 uniform n anisotropic refinements and solve'
 !  ........ Get #refinements to be done
         write(*,*) 'Enter number of anisotropic H-refinements:'
         read(*,*) numRef
@@ -278,6 +281,16 @@ program main
         flag(1) = 1
         write(*,*) 'after one uniform refinement'
         call compute_error(flag,1)
+
+        call global_href
+        !call close_mesh
+        call update_gdof
+        call update_Ddof
+        call mumps_interf(MY_NR_RHS)
+        flag(1) = 1
+        write(*,*) 'after 2 uniform refinement'
+        call compute_error(flag,1)
+
           iref = 0
           do while(iref.lt.numRef)
 !  ........ Do anisotropic h-refinements
