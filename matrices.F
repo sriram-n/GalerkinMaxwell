@@ -22,7 +22,7 @@ c
 #endif
 c
 c max # of elements in the first layer
-        integer, parameter :: MAXNRFL=8
+        integer, parameter :: MAXNRFL=32
 c
 c # of stored elements in the first layer
         integer :: NRFL

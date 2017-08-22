@@ -179,10 +179,13 @@ c      iprint = 0
 c
 C C c..............FOR LONG WAVEGUIDE: RE-USING STIFFNESS MATRICES
 C c ...check if one needs to recompute element matrices
-C       idec=0
-C       call copy_element_matrices(MdE,xnod,ibc, idec,
-C      .                        ZalocEE,ZblocE)
-C       if (idec.eq.1) return
+       idec=0
+       call copy_element_matrices(MdE,xnod,ibc, idec,
+     .                        ZalocEE,ZblocE)
+       if (idec.eq.1) then 
+         write(*,*) 'not computing the stiffness matrices'         
+         return
+       endif
 C C c..............FOR LONG WAVEGUIDE: RE-USING STIFFNESS MATRICES
 c  ...clear space for stiffness matrix and rhsv:
       ZblocE = ZERO; ZalocEE = ZERO
@@ -333,18 +336,15 @@ c  ...........accumulate for the extended stiffness matrix
           enddo
         enddo
       enddo
-c
-C       if (idec.ne.2) then
-C         write(*,*) 'elem_dpgMaxwell: idec = ',idec
-C         stop 1
-C       endif
-C       call copy_element_matrices(MdE,xnod,ibc, idec,
-C      .                        ZalocEE,ZblocE)
-c
-C       write(*,*) 'from elem.F: ZalocEE is: ', ZalocEE(1:MdE,1:MdE)
-C       write(*,*) ''
-C       write(*,*) 'from elem.F: ZblocE is: ', ZblocE(1:MdE)
-C       call pause
+cccccccccccccccccccccccccccccccccccc
+       if (idec.ne.2) then
+         write(*,*) 'elem_dpgMaxwell: idec = ',idec
+         stop 1
+       endif
+       call copy_element_matrices(MdE,xnod,ibc, idec,
+     .                        ZalocEE,ZblocE)
+
+cccccccccccccccccccccccccccccccccccc
       if (iprint.ge.1) then
         write(*,7010)
  7010   format('elem_Hcurl: ZblocE = ')
@@ -354,7 +354,7 @@ C       call pause
  7012   format('elem_Hcurl: ZalocEE = ')
         do i=1,NrdofE
           write(*,7013) i,ZalocEE(i,1:NrdofE)
- 7013     format('i = ',i3,10(/,5(2e12.5,2x)))
+ 7013     format('i = ',i3,10(/,10(2e12.5,2x)))
         enddo
         call pause
       endif
@@ -384,7 +384,7 @@ c.......declare input/output variables
 c
 c ...element geometry dof
       real*8, dimension(3,MAXbrickH),intent(in) :: Xnod
-      integer  :: Idec
+      integer, intent(inout)  :: Idec
 c
       integer :: iprint,i,j
 c
@@ -397,7 +397,7 @@ c ..check if one should recompute the element matrices
 c ... check if IBC is imposed, if so, always compute matrices
       do j=1,6
         if(ibc(j,1).eq.9) then
-          write(*,*) 'ibc is imposed'
+C          write(*,*) 'ibc is imposed'
           Idec = 2
           return
         endif
@@ -417,9 +417,23 @@ c ....element matrices have been computed
 c
       write(*,*) 'not computing the stiffness matrices'
 c ....copy the element matrices from the temporary data structure
-      write(*,*) 'i is: ', i
+C      write(*,*) 'i is: ', i
+c      call pause
       ZalocEE(1:MdE,1:MdE) = ZFL_EE(1:MdE,1:MdE,i)
       ZblocE(1:MdE) = ZLOADFL_E(1:MdE,i)
+c      
+c        write(*,9010)
+c 9010   format('elem_Hcurl: ZblocE = ')
+c        write(*,9011) ZblocE(1:12)
+c 9011   format(10e12.5)
+c       write(*,9012)
+c 9012   format('elem_Hcurl: ZalocEE = ')
+c        do i=1,12
+c          write(*,9013) i,ZalocEE(i,1:12)
+c 9013     format('i = ',i3,10(/,10(2e12.5,2x)))
+c        enddo
+c        call pause
+              
       return
 c
 c ..store the element matrices

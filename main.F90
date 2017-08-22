@@ -31,7 +31,7 @@ program main
 !
 !                             option label      // explanation                // default value     // parameter
       call get_option_string( '-file-control'    , 'Control file'              , './files/control'  , FILE_CONTROL)
-      call get_option_string( '-file-geometry'   , 'Geometry file'             , './files/cube', FILE_GEOM   )
+      call get_option_string( '-file-geometry'   , 'Geometry file'             , './files/cube_waveguide512', FILE_GEOM   )
       call get_option_string( '-file-phys'       , 'Physics file'              , './files/physics'  , FILE_PHYS   )
       call get_option_string( '-file-refinement' , 'Refinement files location' , '../../files/ref'  , FILE_REFINE )
       call get_option_string( '-file-history'    , 'History file'              , './files/history'  , FILE_HISTORY)
@@ -49,10 +49,11 @@ program main
 !
       call get_option_real(   '-mu'                 , 'MU'                        , 1.d0               , MU          )
       call get_option_real(   '-epsilon'            , 'EPSILON'                   , 1.d0               , EPSILON     )
-      call get_option_real(   '-sigma'              , 'SIGMA'                     , 0.d0               , SIGMA       )
+      call get_option_real(   '-sigma'              , 'SIGMA'                     , 0.0d0               , SIGMA       )
       PI = dacos(-1.d0)
       call get_option_real(   '-omega'              , 'OMEGA'                     , 1.5d0*PI           , OMEGA       )
       GAMMA = sqrt(1.d0-(PI**2)/(OMEGA**2))
+      !call get_option_real(   '-omega'              , 'OMEGA'                     , 1.0d0           , OMEGA       )
       !GAMMA = 1.d0
 !      call get_option_real(   '-gamma'              , 'GAMMA'                     , 1.d0               , GAMMA       )
 !     -- Parview Interface --
@@ -61,7 +62,7 @@ program main
       call get_option_string( '-prefix'          , 'Prefix paraview file'      ,'galerkinMaxwell'            , PREFIX      )
       call get_option_string('-file-vis-upscale','Visualization upscale file location','../../files/vis',FILE_VIS          )
       call get_option_string('-vis-level'       ,'Visualization upscale level (0-3)'  ,'2'                 ,VLEVEL            )
-      call get_option_string('-dir-paraview'    ,'Paraview root directory'            ,'./output/figures/waveguide128/' ,PARAVIEW_DIR      )
+      call get_option_string('-dir-paraview'    ,'Paraview root directory'            ,'./output/figures/test512_p4/' ,PARAVIEW_DIR      )
       call get_option_bool(  '-paraview-geom'   ,'Dump geom at every Paraview call'   ,.TRUE.              ,PARAVIEW_DUMP_GEOM)
       call get_option_bool(  '-paraview-attr'   ,'Dump solution to Paraview'          ,.TRUE.              ,PARAVIEW_DUMP_ATTR)
 !
